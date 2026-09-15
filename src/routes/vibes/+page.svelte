@@ -104,29 +104,6 @@
 		{/if}
 	</section>
 
-	<section class="card hero-card">
-		<p class="label">Net worth</p>
-		<p class="hero-value">{fmt(data.netWorth)}</p>
-		<p class="hero-note">
-			Placeholder data for the test account — nothing here is pulled from a real bank yet.
-		</p>
-	</section>
-
-	<section class="section">
-		<p class="label section-label">Accounts</p>
-		<div class="card-list">
-			{#each data.accounts as a (a.id)}
-				<div class="card row-card">
-					<div>
-						<p class="row-title">{a.name}</p>
-						<p class="row-sub">{a.type}</p>
-					</div>
-					<p class="row-value" class:negative={a.balance < 0}>{fmt(a.balance)}</p>
-				</div>
-			{/each}
-		</div>
-	</section>
-
 	<section class="section">
 		<p class="label section-label">Spending vs. mood this week</p>
 		<div class="card chart-card">
@@ -229,6 +206,29 @@
 			</div>
 		</section>
 	{/if}
+
+	<section class="card hero-card">
+		<p class="label">Net worth</p>
+		<p class="hero-value">{fmt(data.netWorth)}</p>
+		<p class="hero-note">
+			Placeholder data for the test account — nothing here is pulled from a real bank yet.
+		</p>
+	</section>
+
+	<section class="section">
+		<p class="label section-label">Accounts</p>
+		<div class="card-list">
+			{#each data.accounts as a (a.id)}
+				<div class="card row-card">
+					<div>
+						<p class="row-title">{a.name}</p>
+						<p class="row-sub">{a.type}</p>
+					</div>
+					<p class="row-value" class:negative={a.balance < 0}>{fmt(a.balance)}</p>
+				</div>
+			{/each}
+		</div>
+	</section>
 
 	{#if data.goals.length}
 		<section class="section">
