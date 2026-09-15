@@ -11,21 +11,26 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
-		"db:studio": "drizzle-kit studio"
+		"db:studio": "drizzle-kit studio",
+		"db:seed": "tsx src/lib/server/db/seed.ts"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "latest",
 		"@sveltejs/kit": "latest",
 		"@sveltejs/vite-plugin-svelte": "latest",
+		"@types/bcryptjs": "latest",
+		"@types/node": "latest",
 		"dotenv": "latest",
 		"drizzle-kit": "latest",
 		"svelte": "latest",
 		"svelte-check": "latest",
+		"tsx": "latest",
 		"typescript": "latest",
 		"vite": "latest"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "latest",
+		"bcryptjs": "latest",
 		"drizzle-orm": "latest"
 	}
 }

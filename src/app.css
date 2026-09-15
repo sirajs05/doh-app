@@ -1,0 +1,131 @@
+:root {
+	--bg: #171210;
+	--surface-1: #221b17;
+	--surface-2: #2b231e;
+	--surface-3: #362d26;
+	--border: rgba(245, 239, 230, 0.08);
+	--border-strong: rgba(245, 239, 230, 0.16);
+
+	--text-1: #f5efe6;
+	--text-2: #b8ac9f;
+	--text-3: #7a6f62;
+
+	--purple: #a565b3;
+	--purple-dim: #2a1c2d;
+	--blue: #7fa3c7;
+	--blue-dim: #1c2530;
+	--green: #7bb85c;
+	--green-dim: #1c2818;
+	--gold: #f0a907;
+	--gold-dim: #2e2313;
+	--red: #c96a6a;
+	--red-dim: #2c1a1a;
+
+	--radius: 18px;
+	--radius-sm: 12px;
+
+	--font-display: 'Fredoka', sans-serif;
+	--font-body: 'Fredoka', sans-serif;
+
+	color-scheme: dark;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	background: var(--bg);
+	color: var(--text-1);
+	font-family: var(--font-body);
+	min-height: 100%;
+}
+
+body {
+	min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+	font-family: var(--font-display);
+	font-weight: 600;
+	margin: 0;
+}
+
+p {
+	margin: 0;
+}
+
+a {
+	color: inherit;
+}
+
+button {
+	font-family: inherit;
+}
+
+.card {
+	background: var(--surface-1);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 20px;
+}
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 13px 22px;
+	border-radius: var(--radius-sm);
+	font-family: var(--font-body);
+	font-weight: 600;
+	font-size: 14px;
+	letter-spacing: 0.02em;
+	border: 1px solid transparent;
+	cursor: pointer;
+	transition:
+		opacity 0.15s,
+		transform 0.1s;
+	text-decoration: none;
+}
+.btn:hover {
+	opacity: 0.9;
+}
+.btn:active {
+	transform: scale(0.98);
+}
+.btn-primary {
+	background: var(--text-1);
+	color: var(--bg);
+}
+.btn-ghost {
+	background: transparent;
+	color: var(--text-2);
+	border-color: var(--border-strong);
+}
+
+.label {
+	font-family: var(--font-body);
+	font-weight: 500;
+	font-size: 11px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--text-3);
+}
+
+.error-text {
+	color: var(--red);
+	font-size: 13px;
+	margin: 4px 0 8px;
+}
+
+.page {
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 0 24px 80px;
+}
