@@ -29,6 +29,16 @@
 
 		<button class="btn btn-primary" type="submit">Log in</button>
 	</form>
+
+	<section class="card demo-creds">
+		<p class="label">Demo admin login</p>
+		<p class="cred-line"><span class="cred-key">Email</span><code class="cred">admin@doh.app</code></p>
+		<p class="cred-line"><span class="cred-key">Password</span><code class="cred">Admin123!</code></p>
+		<p class="cred-foot">
+			Regular user demo is at <a href="/login">/login</a> —
+			<code class="cred small">test@test.com</code> / <code class="cred small">password123</code>
+		</p>
+	</section>
 </main>
 
 <style>
@@ -78,5 +88,51 @@
 	}
 	.input:focus {
 		border-color: var(--purple);
+	}
+	.demo-creds {
+		width: 100%;
+		max-width: 340px;
+		margin-top: 22px;
+		text-align: left;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		border-color: var(--border-strong);
+	}
+	.cred-line {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 12px;
+	}
+	.cred-key {
+		font-size: 12px;
+		color: var(--text-2);
+	}
+	.cred {
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 20px;
+		font-weight: 600;
+		color: #ffffff;
+		background: var(--surface-2);
+		border: 1px solid var(--border-strong);
+		border-radius: 8px;
+		padding: 6px 10px;
+		user-select: all;
+	}
+	.cred.small {
+		font-size: 13px;
+		padding: 2px 6px;
+	}
+	.cred-foot {
+		font-size: 12px;
+		color: var(--text-2);
+		line-height: 1.9;
+		margin-top: 4px;
+		padding-top: 10px;
+		border-top: 1px solid var(--border);
+	}
+	.cred-foot a {
+		color: var(--purple);
 	}
 </style>

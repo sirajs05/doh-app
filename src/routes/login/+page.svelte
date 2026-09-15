@@ -30,7 +30,16 @@
 		<button class="btn btn-primary" type="submit">Log in</button>
 	</form>
 
-	<p class="hint">Test account: test@test.com / password123</p>
+	<section class="card demo-creds">
+		<p class="label">Demo login</p>
+		<p class="cred-line"><span class="cred-key">Email</span><code class="cred">test@test.com</code></p>
+		<p class="cred-line"><span class="cred-key">Password</span><code class="cred">password123</code></p>
+		<p class="cred-foot">
+			Or log in as Admin — <a href="/admin/login">Admin login</a>
+		</p>
+		<p class="cred-line"><span class="cred-key">Email</span><code class="cred">admin@doh.app</code></p>
+		<p class="cred-line"><span class="cred-key">Password</span><code class="cred">Admin123!</code></p>
+	</section>
 </main>
 
 <style>
@@ -83,9 +92,48 @@
 	.btn {
 		margin-top: 6px;
 	}
-	.hint {
-		margin-top: 20px;
-		font-size: 11px;
-		color: var(--text-3);
+	.demo-creds {
+		width: 100%;
+		max-width: 340px;
+		margin-top: 22px;
+		text-align: left;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		border-color: var(--border-strong);
+	}
+	.cred-line {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 12px;
+	}
+	.cred-key {
+		font-size: 12px;
+		color: var(--text-2);
+	}
+	.cred {
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 20px;
+		font-weight: 600;
+		color: #ffffff;
+		background: var(--surface-2);
+		border: 1px solid var(--border-strong);
+		border-radius: 8px;
+		padding: 6px 10px;
+		user-select: all;
+	}
+	.cred-foot {
+		font-family: var(--font-display);
+		font-size: 18px;
+		color: #ffffff;
+		margin-top: 6px;
+		padding-top: 14px;
+		border-top: 1px solid var(--border);
+	}
+	.cred-foot a {
+		color: var(--purple);
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 </style>
