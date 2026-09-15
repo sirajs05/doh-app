@@ -68,22 +68,20 @@ missing or the wrong role.
 
 ## Styling
 
-Dark theme, single font: **Jorick**, used for both headings and body text
-via the `--font-display` / `--font-body` variables in `src/app.css` (both
-point at Jorick). Jorick is a bold, characterful display face — great for
-the wordmark and big numbers, but worth knowing it can get harder to read
-at very small sizes (the 8–10px uppercase labels scattered around the UI).
-If any of that reads as too heavy once you see it running, the easy fix is
-to point `--font-body` back at a plain sans-serif (e.g. Inter) while
-keeping `--font-display: 'Jorick'` for headings only.
+Dark theme, single font: **Fredoka**, loaded from Google Fonts in
+`src/app.html` and used for both headings and body text via the
+`--font-display` / `--font-body` variables in `src/app.css` (both point at
+Fredoka; headings use weight 600, body text 400–500).
 
-**Jorick isn't a Google Font** — it's not in the Google Fonts catalog, so
-the site previously linked to a Google Fonts URL that didn't actually serve
-anything, and silently fell back to a generic serif. It's now self-hosted
-via `@font-face` in `src/app.css`, pointing at `static/fonts/`. See
-`static/fonts/README.md` for exactly which files to drop in (a `.woff2`,
-`.woff`, `.ttf`, or `.otf` export of Jorick — from your Canva brand kit or
-wherever you originally sourced it) to make it actually render.
+This replaced **Jorick**, the font from the original brand sheet. Turns out
+Jorick isn't distributed on Google Fonts at all — the site's original
+`fonts.googleapis.com/css2?family=Jorick` link never actually served
+anything, so the app had silently been falling back to a generic serif the
+whole time it "used" Jorick. Fredoka is a similarly bold, rounded, friendly
+display face that's actually available and legible at small sizes (the
+8–10px uppercase labels scattered around the UI). `static/fonts/README.md`
+has notes on self-hosting a real Jorick file later if you get your hands on
+one (e.g. exported from a Canva brand kit).
 
 Color tokens (purple, blue, green, gold, on a near-black background) live
 in `src/app.css` as CSS custom properties.

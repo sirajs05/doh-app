@@ -72,6 +72,18 @@ async function main() {
 		role: 'admin'
 	});
 
+	console.log('Seeding a week of mood check-ins for the test user...');
+	// Days 1-6 ago; today is left empty so the login check-in fills it in.
+	const testWeekMoods = [
+		{ userId: testUser.id, mood: 'good' as const, createdAt: daysAgo(6) },
+		{ userId: testUser.id, mood: 'okay' as const, createdAt: daysAgo(5) },
+		{ userId: testUser.id, mood: 'stressed' as const, createdAt: daysAgo(4) },
+		{ userId: testUser.id, mood: 'overwhelmed' as const, createdAt: daysAgo(3) },
+		{ userId: testUser.id, mood: 'okay' as const, createdAt: daysAgo(2) },
+		{ userId: testUser.id, mood: 'great' as const, createdAt: daysAgo(1) }
+	];
+	await db.insert(moodEntries).values(testWeekMoods);
+
 	console.log('Seeding mock financial data for the test user...');
 	await db.insert(mockAccounts).values([
 		{ userId: testUser.id, name: 'Everyday Checking', type: 'checking', balance: 2340.55 },
