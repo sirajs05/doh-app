@@ -1,0 +1,227 @@
+CREATE SCHEMA "public";
+CREATE SCHEMA "neon_auth";
+CREATE TYPE "mood" AS ENUM('great', 'good', 'okay', 'stressed', 'overwhelmed');
+CREATE TYPE "role" AS ENUM('user', 'premium_user', 'admin');
+CREATE TYPE "flare_severity" AS ENUM('minimal', 'moderate', 'severe');
+CREATE TYPE "condition_kind" AS ENUM('acute', 'chronic');
+CREATE TABLE "appointments" (
+	"id" serial,
+	"user_id" integer NOT NULL,
+	"name" text NOT NULL,
+	"detail" text NOT NULL,
+	"appt_type" text NOT NULL,
+	"appt_at" timestamp NOT NULL,
+	"cost" numeric(12, 2),
+	"covered" boolean DEFAULT false NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"severity" flare_severity NOT NULL,
+	"kind" condition_kind NOT NULL,
+	CONSTRAINT "appts_pkey" PRIMARY KEY("id")
+);
+CREATE TABLE "budget" (
+	"id" serial,
+	"user_id" integer NOT NULL,
+	"category" text NOT NULL,
+	"monthly_budget" numeric(12, 2) NOT NULL,
+	CONSTRAINT "budgets_pkey" PRIMARY KEY("id")
+);
+CREATE TABLE "flare_ups" (
+	"id" serial PRIMARY KEY,
+	"user_id" integer NOT NULL,
+	"symptoms" text[] NOT NULL,
+	"triggers" text[],
+	"notes" text,
+	"extra_cost" numeric(12, 2) DEFAULT '0' NOT NULL,
+	"occurred_at" timestamp NOT NULL
+);
+CREATE TABLE "goals" (
+	"id" serial PRIMARY KEY,
+	"user_id" integer NOT NULL,
+	"name" text NOT NULL,
+	"target_amt" numeric(12, 2) NOT NULL,
+	"current_amt" numeric(12, 2) DEFAULT '0.00' NOT NULL
+);
+CREATE TABLE "health_conditions" (
+	"id" serial,
+	"user_id" integer NOT NULL,
+	"label" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "health_condtions_pkey" PRIMARY KEY("id")
+);
+CREATE TABLE "medications" (
+	"id" serial PRIMARY KEY,
+	"user_id" integer NOT NULL,
+	"name" text NOT NULL,
+	"dosage" text NOT NULL,
+	"frequency" text NOT NULL,
+	"reason" text NOT NULL,
+	"monthly_cost" numeric(12, 2) NOT NULL,
+	"refill_date" timestamp NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "mood_entries" (
+	"id" serial PRIMARY KEY,
+	"user_id" integer NOT NULL,
+	"mood" mood NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+CREATE TABLE "users" (
+	"id" serial PRIMARY KEY,
+	"email" text NOT NULL CONSTRAINT "users_email_unique" UNIQUE,
+	"password_hash" text NOT NULL,
+	"username" text NOT NULL CONSTRAINT "users_username_key" UNIQUE,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"role" role DEFAULT 'user' NOT NULL
+);
+
+---------------------------------------------------------------
+-------------------- AUTH HANDLED BY NEON ---------------------
+---------------------------------------------------------------
+
+CREATE TABLE "neon_auth"."account" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"accountId" text NOT NULL,
+	"providerId" text NOT NULL,
+	"userId" uuid NOT NULL,
+	"accessToken" text,
+	"refreshToken" text,
+	"idToken" text,
+	"accessTokenExpiresAt" timestamp with time zone,
+	"refreshTokenExpiresAt" timestamp with time zone,
+	"scope" text,
+	"password" text,
+	"createdAt" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"updatedAt" timestamp with time zone NOT NULL
+);
+CREATE TABLE "neon_auth"."invitation" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"organizationId" uuid NOT NULL,
+	"email" text NOT NULL,
+	"role" text,
+	"status" text NOT NULL,
+	"expiresAt" timestamp with time zone NOT NULL,
+	"createdAt" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"inviterId" uuid NOT NULL
+);
+CREATE TABLE "neon_auth"."jwks" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"publicKey" text NOT NULL,
+	"privateKey" text NOT NULL,
+	"createdAt" timestamp with time zone NOT NULL,
+	"expiresAt" timestamp with time zone,
+	"alg" text,
+	"crv" text
+);
+CREATE TABLE "neon_auth"."member" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"organizationId" uuid NOT NULL,
+	"userId" uuid NOT NULL,
+	"role" text NOT NULL,
+	"createdAt" timestamp with time zone NOT NULL
+);
+CREATE TABLE "neon_auth"."organization" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"name" text NOT NULL,
+	"slug" text NOT NULL CONSTRAINT "organization_slug_key" UNIQUE,
+	"logo" text,
+	"createdAt" timestamp with time zone NOT NULL,
+	"metadata" text
+);
+CREATE TABLE "neon_auth"."project_config" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"name" text NOT NULL,
+	"endpoint_id" text NOT NULL CONSTRAINT "project_config_endpoint_id_key" UNIQUE,
+	"created_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"trusted_origins" jsonb NOT NULL,
+	"social_providers" jsonb NOT NULL,
+	"email_provider" jsonb,
+	"email_and_password" jsonb,
+	"allow_localhost" boolean NOT NULL,
+	"plugin_configs" jsonb,
+	"webhook_config" jsonb
+);
+CREATE TABLE "neon_auth"."session" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"expiresAt" timestamp with time zone NOT NULL,
+	"token" text NOT NULL CONSTRAINT "session_token_key" UNIQUE,
+	"createdAt" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"updatedAt" timestamp with time zone NOT NULL,
+	"ipAddress" text,
+	"userAgent" text,
+	"userId" uuid NOT NULL,
+	"impersonatedBy" text,
+	"activeOrganizationId" text
+);
+CREATE TABLE "neon_auth"."user" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"name" text NOT NULL,
+	"email" text NOT NULL CONSTRAINT "user_email_key" UNIQUE,
+	"emailVerified" boolean NOT NULL,
+	"image" text,
+	"createdAt" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"role" text,
+	"banned" boolean,
+	"banReason" text,
+	"banExpires" timestamp with time zone
+);
+CREATE TABLE "neon_auth"."verification" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	"identifier" text NOT NULL,
+	"value" text NOT NULL,
+	"expiresAt" timestamp with time zone NOT NULL,
+	"createdAt" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+---------------------------------------------------------------
+---------------------------------------------------------------
+
+CREATE UNIQUE INDEX "appts_pkey" ON "appointments" ("id");
+CREATE UNIQUE INDEX "budgets_pkey" ON "budget" ("id");
+CREATE UNIQUE INDEX "flare_ups_pkey" ON "flare_ups" ("id");
+CREATE UNIQUE INDEX "goals_pkey" ON "goals" ("id");
+CREATE UNIQUE INDEX "health_condtions_pkey" ON "health_conditions" ("id");
+CREATE UNIQUE INDEX "medications_pkey" ON "medications" ("id");
+CREATE UNIQUE INDEX "mood_entries_pkey" ON "mood_entries" ("id");
+CREATE UNIQUE INDEX "users_email_unique" ON "users" ("email");
+CREATE UNIQUE INDEX "users_pkey" ON "users" ("id");
+CREATE UNIQUE INDEX "users_username_key" ON "users" ("username");
+CREATE UNIQUE INDEX "account_pkey" ON "neon_auth"."account" ("id");
+CREATE INDEX "account_userId_idx" ON "neon_auth"."account" ("userId");
+CREATE INDEX "invitation_email_idx" ON "neon_auth"."invitation" ("email");
+CREATE INDEX "invitation_organizationId_idx" ON "neon_auth"."invitation" ("organizationId");
+CREATE UNIQUE INDEX "invitation_pkey" ON "neon_auth"."invitation" ("id");
+CREATE UNIQUE INDEX "jwks_pkey" ON "neon_auth"."jwks" ("id");
+CREATE INDEX "member_organizationId_idx" ON "neon_auth"."member" ("organizationId");
+CREATE UNIQUE INDEX "member_pkey" ON "neon_auth"."member" ("id");
+CREATE INDEX "member_userId_idx" ON "neon_auth"."member" ("userId");
+CREATE UNIQUE INDEX "organization_pkey" ON "neon_auth"."organization" ("id");
+CREATE UNIQUE INDEX "organization_slug_key" ON "neon_auth"."organization" ("slug");
+CREATE UNIQUE INDEX "organization_slug_uidx" ON "neon_auth"."organization" ("slug");
+CREATE UNIQUE INDEX "project_config_endpoint_id_key" ON "neon_auth"."project_config" ("endpoint_id");
+CREATE UNIQUE INDEX "project_config_pkey" ON "neon_auth"."project_config" ("id");
+CREATE UNIQUE INDEX "session_pkey" ON "neon_auth"."session" ("id");
+CREATE UNIQUE INDEX "session_token_key" ON "neon_auth"."session" ("token");
+CREATE INDEX "session_userId_idx" ON "neon_auth"."session" ("userId");
+CREATE UNIQUE INDEX "user_email_key" ON "neon_auth"."user" ("email");
+CREATE UNIQUE INDEX "user_pkey" ON "neon_auth"."user" ("id");
+CREATE INDEX "verification_identifier_idx" ON "neon_auth"."verification" ("identifier");
+CREATE UNIQUE INDEX "verification_pkey" ON "neon_auth"."verification" ("id");
+ALTER TABLE "appointments" ADD CONSTRAINT "appts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+ALTER TABLE "budget" ADD CONSTRAINT "budgets_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+ALTER TABLE "flare_ups" ADD CONSTRAINT "flare_ups_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+ALTER TABLE "goals" ADD CONSTRAINT "goals_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+ALTER TABLE "health_conditions" ADD CONSTRAINT "health_conditions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+ALTER TABLE "medications" ADD CONSTRAINT "medications_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id");
+ALTER TABLE "mood_entries" ADD CONSTRAINT "mood_entries_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;
+
+-----------------------------------------------------------------------------------
+
+ALTER TABLE "neon_auth"."account" ADD CONSTRAINT "account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "neon_auth"."user"("id") ON DELETE CASCADE;
+ALTER TABLE "neon_auth"."invitation" ADD CONSTRAINT "invitation_inviterId_fkey" FOREIGN KEY ("inviterId") REFERENCES "neon_auth"."user"("id") ON DELETE CASCADE;
+ALTER TABLE "neon_auth"."invitation" ADD CONSTRAINT "invitation_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "neon_auth"."organization"("id") ON DELETE CASCADE;
+ALTER TABLE "neon_auth"."member" ADD CONSTRAINT "member_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "neon_auth"."organization"("id") ON DELETE CASCADE;
+ALTER TABLE "neon_auth"."member" ADD CONSTRAINT "member_userId_fkey" FOREIGN KEY ("userId") REFERENCES "neon_auth"."user"("id") ON DELETE CASCADE;
+ALTER TABLE "neon_auth"."session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "neon_auth"."user"("id") ON DELETE CASCADE;
